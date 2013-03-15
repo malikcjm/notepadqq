@@ -337,7 +337,8 @@ int MainWindow::on_tabWidgetX_tabCloseRequested(int index, QTabWidgetqq * _tabWi
     if(!(_tabWidget->count() == 1
          && isNewEmptyTab(index))) {
 
-        if(getTextBoxFromIndex(index, _tabWidget)->isModified()) {
+        QsciScintillaqq* tab = getTextBoxFromIndex(index, _tabWidget);
+        if(tab->isModified()) {
             _tabWidget->setCurrentIndex(index);
             int ret = askIfWantToSave(index, askToSaveChangesReason_tabClosing);
             if(ret == QMessageBox::Save) {
@@ -362,6 +363,10 @@ int MainWindow::on_tabWidgetX_tabCloseRequested(int index, QTabWidgetqq * _tabWi
             // It's already saved: we can remove it safely.
             _tabWidget->removeTab(index);
             result = MainWindow::tabCloseResult_AlreadySaved;
+        }
+
+        if (result != MainWindow::tabCloseResult_Canceled) {
+            tab->deleteLater();
         }
     }
 
